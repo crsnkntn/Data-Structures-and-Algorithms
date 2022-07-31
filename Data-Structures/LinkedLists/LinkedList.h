@@ -1,41 +1,73 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
+#include <initializer_list>
+
+namespace impl {
+    template <typename T>
+    struct LinkedListNode {
+        LinkedListNode<T>* next {nullptr};
+        T datum {T()};
+    };
+
+    template <typename T>
+    class LinkedListIterator {
+        public:
+            LinkedListIterator () = default;
+            explicit LinkedListIterator (LinkedListNode* n);
+
+            // Operators
+            T& operator*() const;
+            LinkedListIterator& operator++();
+            LinkedListIterator operator++(T t);
+            bool operator==(const LinkedListIterator& rhs);
+            bool operator!=(const LinkedListIterator& rhs);
+
+        private:
+            void store_nodes (LinkedListNode* n);
+
+            std::vector<LinkedListNode*> nodes;
+
+            std::vector<LinkedListNode*>::size_type current {0};
+    };
+}
 
 template <typename T>
 class LinkedList {
-    private:
-        struct Node {
-            T datum;
-            Node* next;
-
-            Node (T d, Node* n) {
-                datum = d;
-                next = nullptr;
-            }
-        };
-
-        // Attempts to remove one T with datum "datum"; if it exists return true, else return false
-        bool remove_helper (T datum);
-
     public:
-        LinkedList ();
+        using iterator = impl::BstIterator;
+        LinkedList () = default;
 
-        LinkedList (const LinkedList& other);
+        explicit LinkedList(std::initializer_list<T> il);
 
         ~LinkedList ();
 
-        void append (T datum);
+        // Currently, the copy and move operations will not be supported.
+        LinkedList(const LinkedList&) = delete;
+        LinkedList(LinkedList&&) = delete;
+        LinkedList& operator=(const LinkedList&) = delete;
+        LinkedList& operator=(LinkedList&&) = delete;
 
-        void remove (T datum);
+        // Client API
+        void insert (const T t);
 
-        void print_list_contents ();
+        void insert_unique (const T t);
 
+        void remove (const T t);
+
+        void remove_all (const T t);
+
+        friend std::ostream& operator<<(std::ostream& os, const LinkedList& l);
+
+        // Iterators
+        iterator begin() const;
+        iterator end() const;
+        
     private:
-        // The size of the LinkedList
         size_t size;
 
-        // The front and back of the LinkedList
-        Node* front;
-        Node* back;
+        impl::LinkedListNode* head {nullptr};
+
+        bool remove_helper (T t);
 };

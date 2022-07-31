@@ -1,76 +1,132 @@
 #include "LinkedList.h"
 
-// Default Constructor - Sets front and back to nullptr, size=0
-template <typename T>
-LinkedList<T>::LinkedList () {
-    front = nullptr;
-    back = nullptr;
+namespace impl {
+    template <typename T>
+    LinkedListIterator<T>::LinkedListIterator (LinkedListNode<T>* n) {
+        store_nodes(n);
 
-    size = 0;
-}
-
-// Copy Constructor
-template <typename T>
-LinkedList<T>::LinkedList (const LinkedList& other) {
-    if (other.size == 0) {
-        front = nullptr;
-        back = nullptr;
-        size = 0;
+        nodes.push_back(nullptr);
     }
 
-    Node* new_ite = new Node(other.front.datum, nullptr);
-    Node* old_ite = other.front->next;
+    template <typename T>
+    T& LinkedListIterator<T>::operator*() const {
+        return nodes[current]->datum;
+    }
 
-    while (old_ite != nullptr) {
-        new_ite->next = new Node(old_ite->datum, nullptr);
-        new_ite = new_ite->next;
-        back = new_ite;
+    template <typename T>
+    LinkedListIterator<T>& LinkedListIterator<T>::operator++() {
+        if (current == nodes.size() - 1)
+            return *this;
+        ++current;
+        return *this;
+    }
+
+    template <typename T>
+    LinkedListIterator<T> LinkedListIterator<T>::operator++(T t) {
+        LinkedListIterator<T>* temp = *this;
+        if (current == nodes.size() - 1)
+            return temp;
+        ++current;
+        return temp;
+    }
+
+    template <typename T>
+    bool LinkedListIterator<T>::operator==(const LinkedListIterator& rhs) {
+        return nodes[current] == rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    bool LinkedListIterator<T>::operator!=(const LinkedListIterator& rhs) {
+        return nodes[current] != rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    void LinkedListIterator<T>::sort_nodes (LinkedListNode<T>* n) {
+        if (n != nullptr) {
+            nodes.push_back(n);
+            store_nodes (n->next);
+        }
     }
 }
 
-// Destructor - Necessary because the new keyword is used to create Nodes!
+template <typename T>
+LinkedList<T>::LinkedList () { 
+    size = 0; 
+}
+
+template <typename T>
+LinkedList<T>::LinkedList (std::initializer_list<T> il) {
+    for (const auto n : il)
+        insert(n);
+}
+
 template <typename T>
 LinkedList<T>::~LinkedList () {
-    Node* ite = front;
-    while (ite != nullptr) {
-        Node* victim = ite;
-        ite = ite->next;
+    impl::LinkedListNode* iter = head;
+    while (iter != nullptr) {
+        impl::LinkedListNode* victim = iter;
+        iter = iter->next;
         delete victim;
     }
 }
 
-// Appends a new Node onto the back, thus creating a new back
 template <typename T>
-void LinkedList<T>::append (T datum) {
-    Node* new_node = new Node(datum, nullptr);
-    if (front == nullptr) {
-        front = new_node;
-        back = new_node;
+void LinkedList<T>::insert (T t) {
+    impl::LinkedListNode* new_node = new impl::LinkedListNode(nullptr, t);
+    if (head == nullptr)
+        head = new_node;
+    else {
+        impl::LinkedListNode* iter = head;
+        while (iter->next != nullptr)
+            iter = iter->next;
+        iter->next = new_node;
     }
-    back->next = new_node;
-    back = new_node;
     size++;
 }
 
 template <typename T>
-bool LinkedList<T>::remove_helper (T datum) {
-    Node* ite = front;
-    while (ite != nullptr) {
-        Node* next = ite->next;
-        if (next != nullptr && next->datum == datum) {
-            ite->next = next->next;
-            delete next;
-            size--;
-            return true;
+void LinkedList<T>::insert_unique (T t) {
+    impl::LinkedListNode* new_node = new impl::LinkedListNode(nullptr, t);
+    if (head == nullptr)
+        head = new_node;
+    else {
+        impl::LinkedListNode* iter = head;
+        while (iter->next != nullptr) {
+            if (iter->datum == t)
+                return;
+            iter = iter->next;
         }
-        ite = ite->next;
+        iter->next = new_node;
     }
-    return false;
+    size++;
 }
 
 template <typename T>
 void LinkedList<T>::remove (T datum) {
+    remove_helper(datum);
+}
+
+template <typename T>
+void LinkedList<T>::remove_all (T datum) {
     while (remove_helper(datum)) {}
+}
+
+template <typename T>
+bool LinkedList<T>::remove_helper (T datum) {
+    if (head == nullptr)
+        return false;
+    
+    impl::LinkedListNode* iter = head, prev = nullptr;
+    while (iter != nullptr) {
+        if (iter->datum == datum) {
+            prev->next = iter->next;
+            delete iter;
+            return true;
+        }
+        prev = iter;
+        iter = iter->next;
+    }
+    return false;
 }
 
 template <typename T>
@@ -82,4 +138,27 @@ void LinkedList<T>::print_list_contents () {
         ite = ite->next;
     }
     std::cout << "END" << std::endl;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const LinkedList& l) {
+    impl::LinkedListNode* ite = l.head;
+    os << "List: ";
+    while (ite != nullptr) {
+        os << "[" << ite->datum << "] -> ";
+        ite = ite->next;
+    }
+    os << "END" << std::endl;
+
+    return os;
+}
+
+template <typename T>
+LinkedList::iterator LinkedList<T>::begin () const {
+    return impl::LinkedListIterator(head);
+}
+
+template <typename T>
+LinkedList::iterator LinkedList<T>::end () const {
+    return impl::LinkedListIterator(nullptr);
 }
