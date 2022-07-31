@@ -1,15 +1,13 @@
 // Used to test each Data Structure 
-#include "LinkedLists/LinkedList.h"
-#include "LinkedLists/LinkedList.cpp"
+#include "Data-Structures/LinkedLists/LinkedList.h"
+#include "Data-Structures/LinkedLists/LinkedList.cpp"
 
 
 int main () {
-    LinkedList<int> ll;
-    ll.append(1);
-    ll.append(3);
-    ll.append(6);
-    ll.print_list_contents();
-    ll.remove(3);
-    ll.print_list_contents();
+    LinkedList<int> ll {1, 2, 3, 4, 5};
+
+    for (const auto& n : ll) {
+        std::cout << n << std::endl;
+    }
     return 1;
 }

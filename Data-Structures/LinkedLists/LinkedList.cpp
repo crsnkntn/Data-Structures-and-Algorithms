@@ -41,17 +41,12 @@ namespace impl {
     }
 
     template <typename T>
-    void LinkedListIterator<T>::sort_nodes (LinkedListNode<T>* n) {
+    void LinkedListIterator<T>::store_nodes (LinkedListNode<T>* n) {
         if (n != nullptr) {
             nodes.push_back(n);
             store_nodes (n->next);
         }
     }
-}
-
-template <typename T>
-LinkedList<T>::LinkedList () { 
-    size = 0; 
 }
 
 template <typename T>
@@ -62,9 +57,9 @@ LinkedList<T>::LinkedList (std::initializer_list<T> il) {
 
 template <typename T>
 LinkedList<T>::~LinkedList () {
-    impl::LinkedListNode* iter = head;
+    impl::LinkedListNode<T>* iter = head;
     while (iter != nullptr) {
-        impl::LinkedListNode* victim = iter;
+        impl::LinkedListNode<T>* victim = iter;
         iter = iter->next;
         delete victim;
     }
@@ -72,11 +67,13 @@ LinkedList<T>::~LinkedList () {
 
 template <typename T>
 void LinkedList<T>::insert (T t) {
-    impl::LinkedListNode* new_node = new impl::LinkedListNode(nullptr, t);
+    impl::LinkedListNode<T>* new_node = new impl::LinkedListNode<T>();
+    new_node->next = nullptr;
+    new_node->datum = t;
     if (head == nullptr)
         head = new_node;
     else {
-        impl::LinkedListNode* iter = head;
+        impl::LinkedListNode<T>* iter = head;
         while (iter->next != nullptr)
             iter = iter->next;
         iter->next = new_node;
@@ -86,11 +83,11 @@ void LinkedList<T>::insert (T t) {
 
 template <typename T>
 void LinkedList<T>::insert_unique (T t) {
-    impl::LinkedListNode* new_node = new impl::LinkedListNode(nullptr, t);
+    impl::LinkedListNode<T>* new_node = new impl::LinkedListNode<T>(nullptr, t);
     if (head == nullptr)
         head = new_node;
     else {
-        impl::LinkedListNode* iter = head;
+        impl::LinkedListNode<T>* iter = head;
         while (iter->next != nullptr) {
             if (iter->datum == t)
                 return;
@@ -116,7 +113,7 @@ bool LinkedList<T>::remove_helper (T datum) {
     if (head == nullptr)
         return false;
     
-    impl::LinkedListNode* iter = head, prev = nullptr;
+    impl::LinkedListNode<T>* iter = head, prev = nullptr;
     while (iter != nullptr) {
         if (iter->datum == datum) {
             prev->next = iter->next;
@@ -130,19 +127,8 @@ bool LinkedList<T>::remove_helper (T datum) {
 }
 
 template <typename T>
-void LinkedList<T>::print_list_contents () {
-    Node* ite = front;
-    std::cout << "List: ";
-    while (ite != nullptr) {
-        std::cout << "[" << ite->datum << "] -> ";
-        ite = ite->next;
-    }
-    std::cout << "END" << std::endl;
-}
-
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const LinkedList& l) {
-    impl::LinkedListNode* ite = l.head;
+std::ostream& operator<<(std::ostream& os, const LinkedList<T>& l) {
+    impl::LinkedListNode<T>* ite = l.head;
     os << "List: ";
     while (ite != nullptr) {
         os << "[" << ite->datum << "] -> ";
@@ -154,11 +140,11 @@ std::ostream& operator<<(std::ostream& os, const LinkedList& l) {
 }
 
 template <typename T>
-LinkedList::iterator LinkedList<T>::begin () const {
-    return impl::LinkedListIterator(head);
+typename LinkedList<T>::iterator LinkedList<T>::begin () const {
+    return impl::LinkedListIterator<T>(head);
 }
 
 template <typename T>
-LinkedList::iterator LinkedList<T>::end () const {
-    return impl::LinkedListIterator(nullptr);
+typename LinkedList<T>::iterator LinkedList<T>::end () const {
+    return impl::LinkedListIterator<T>(nullptr);
 }
