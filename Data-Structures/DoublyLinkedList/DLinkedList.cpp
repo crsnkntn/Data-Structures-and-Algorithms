@@ -212,6 +212,16 @@ void DoublyLinkedList<T>::reverse () {
 }
 
 template <typename T>
+void DoublyLinkedList<T>::print_list (std::ostream& os) {
+    impl::DoublyLinkedListNode<T>* ite = head;
+    while (ite != nullptr) {
+        os << "[" << ite->datum << "] -> ";
+        ite = ite->next;
+    }
+    os << "END" << std::endl;
+}
+
+template <typename T>
 std::ostream& operator<<(std::ostream& os, const DoublyLinkedList<T>& l) {
     impl::DoublyLinkedListNode<T>* ite = l.head;
     os << "List: ";
@@ -232,4 +242,32 @@ typename DoublyLinkedList<T>::iterator DoublyLinkedList<T>::begin () const {
 template <typename T>
 typename DoublyLinkedList<T>::iterator DoublyLinkedList<T>::end () const {
     return impl::DoublyLinkedListIterator<T>(nullptr);
+}
+
+template <typename T>
+void DoublyLinkedList<T>::insert_to_front (T t) {
+    if (head == nullptr) {
+        insert(t);
+        return;
+    }
+    impl::DoublyLinkedListNode<T>* new_node = new impl::DoublyLinkedListNode<T>();
+    new_node->datum = t;
+    new_node->next = head;
+    new_node->prev= nullptr;
+    head->prev = new_node;
+    head = new_node;
+}
+
+template <typename T>
+void DoublyLinkedList<T>::remove_front () {
+    if (head == nullptr)
+        return;
+    impl::DoublyLinkedListNode<T>* victim = head;
+    head = head->next;
+    delete victim;
+}
+
+template <typename T>
+T DoublyLinkedList<T>::access_front () {
+    return (head == nullptr) ? T() : head->datum;
 }

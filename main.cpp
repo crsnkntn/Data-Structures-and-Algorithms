@@ -1,22 +1,27 @@
-// Used to test each Data Structure 
-#include "Data-Structures/DoublyLinkedList/DLinkedList.h"
-#include "Data-Structures/DoublyLinkedList/DLinkedList.cpp"
-#include "Data-Structures/LinkedLists/LinkedList.h"
-#include "Data-Structures/LinkedLists/LinkedList.cpp"
+#include <iostream>
+
+#include "Data-Structures/Queue/Queue.h"
+#include "Data-Structures/Queue/Queue.cpp"
 
 
 int main () {
-    DoublyLinkedList<int> ll {1, 2, 3, 4, 5, 6};
+    Queue<int> q;
+    q.push(5);
+    q.push(9);
+    q.push(9);
+    q.push(9);
+    q.push(5);
+    q.push(66);
+    q.push(88);
+    q.push(445);
+    q.print_queue(std::cout);
+    for (int i = 0; i < 6; i++)
+        q.pop();
+    q.print_queue(std::cout);
 
-    ll.reverse();
+    DoublyLinkedList<int> list {1, 2, 3, 4, 5};
+    list.print_list(std::cout);
 
-    DoublyLinkedList<int> newlist(ll);
-
-    newlist.reverse();
-
-    for (const auto& n : newlist) {
-        std::cout << n << std::endl;
-    }
 
     return 1;
 }

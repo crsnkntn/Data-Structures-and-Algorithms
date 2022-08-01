@@ -67,6 +67,16 @@ class DoublyLinkedList {
 
         void reverse ();
 
+        void print_list (std::ostream& os);
+
+        // Utility Functions to build on top of this class
+        
+        void insert_to_front (T t);
+
+        void remove_front ();
+
+        T access_front ();
+
         friend std::ostream& operator<<(std::ostream& os, const DoublyLinkedList<T>& l);
 
         // Iterators
