@@ -50,8 +50,8 @@ class DoublyLinkedList {
 
         ~DoublyLinkedList ();
 
-        // Currently, the copy and move operations will not be supported.
-        DoublyLinkedList(const DoublyLinkedList<T>&) = delete;
+        DoublyLinkedList(const DoublyLinkedList<T>& other);
+
         DoublyLinkedList(DoublyLinkedList<T>&&) = delete;
         DoublyLinkedList<T>& operator=(const DoublyLinkedList<T>&) = delete;
         DoublyLinkedList<T>& operator=(DoublyLinkedList<T>&&) = delete;

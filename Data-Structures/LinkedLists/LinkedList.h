@@ -47,9 +47,10 @@ class LinkedList {
 
         ~LinkedList ();
 
-        // Currently, the copy and move operations will not be supported.
-        LinkedList(const LinkedList<T>&) = delete;
-        LinkedList(LinkedList<T>&&) = delete;
+        // Copy and Move Constructors
+        LinkedList(const LinkedList<T>& other);
+        LinkedList(LinkedList<T>&& other) = delete;
+
         LinkedList<T>& operator=(const LinkedList<T>&) = delete;
         LinkedList<T>& operator=(LinkedList<T>&&) = delete;
 

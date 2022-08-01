@@ -93,6 +93,33 @@ DoublyLinkedList<T>::DoublyLinkedList (std::initializer_list<T> il) {
 }
 
 template <typename T>
+DoublyLinkedList<T>::DoublyLinkedList(const DoublyLinkedList<T>& other) {
+    if (other.head == nullptr) {
+        head = nullptr;
+        size = 0;
+    }
+    impl::DoublyLinkedListNode<T>* iter = other.head;
+    impl::DoublyLinkedListNode<T>* new_list_iter = new impl::DoublyLinkedListNode<T>();
+    new_list_iter->datum = iter->datum;
+    new_list_iter->next = nullptr;
+    new_list_iter->prev = nullptr;
+    head = new_list_iter;
+    size = 1;
+
+    iter = iter->next;
+    while (iter != nullptr) {
+        impl::DoublyLinkedListNode<T>* temp = new impl::DoublyLinkedListNode<T>();
+        temp->datum = iter->datum;
+        temp->next = nullptr;
+        temp->prev = new_list_iter;
+        new_list_iter->next = temp;
+        new_list_iter = new_list_iter->next;
+        iter = iter->next;
+        size++;
+    }
+}
+
+template <typename T>
 DoublyLinkedList<T>::~DoublyLinkedList () {
     impl::DoublyLinkedListNode<T>* iter = head;
     while (iter != nullptr) {
