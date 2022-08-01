@@ -1,85 +1,187 @@
 #include "DoublyLinkedList.h"
 
-// Default Constructor - Sets front and back to nullptr, size=0
-template <typename T>
-DoublyLinkedList<T>::DoublyLinkedList () {
-    front = nullptr;
-    back = nullptr;
+namespace impl {
+    template <typename T>
+    DoublyLinkedListIterator<T>::DoublyLinkedListIterator (DoublyLinkedListNode<T>* n) {
+        store_nodes(n);
 
-    size = 0;
-}
-
-// Copy Constructor
-template <typename T>
-DoublyLinkedList<T>::DoublyLinkedList (const DoublyLinkedList& other) {
-    if (other.size == 0) {
-        front = nullptr;
-        back = nullptr;
-        size = 0;
+        nodes.push_back(nullptr);
     }
 
-    Node* new_ite = new Node(other.front.datum, nullptr);
-    Node* old_ite = other.front->next;
+    template <typename T>
+    T& DoublyLinkedListIterator<T>::operator*() const {
+        return nodes[current]->datum;
+    }
 
-    while (old_ite != nullptr) {
-        new_ite->next = new Node(old_ite->datum, nullptr);
-        new_ite = new_ite->next;
-        back = new_ite;
+    template <typename T>
+    DoublyLinkedListIterator<T>& DoublyLinkedListIterator<T>::operator++() {
+        if (current == nodes.size() - 1)
+            return *this;
+        ++current;
+        return *this;
+    }
+
+    template <typename T>
+    DoublyLinkedListIterator<T> DoublyLinkedListIterator<T>::operator++(T t) {
+        DoublyLinkedListIterator<T>* temp = *this;
+        if (current == 0)
+            return temp;
+        ++current;
+        return temp;
+    }
+
+    template <typename T>
+    DoublyLinkedListIterator<T>& DoublyLinkedListIterator<T>::operator--() {
+        if (current == 0)
+            return *this;
+        --current;
+        return *this;
+    }
+
+    template <typename T>
+    DoublyLinkedListIterator<T> DoublyLinkedListIterator<T>::operator--(T t) {
+        DoublyLinkedListIterator<T>* temp = *this;
+        if (current == nodes.size() - 1)
+            return temp;
+        ++current;
+        return temp;
+    }
+
+    template <typename T>
+    bool DoublyLinkedListIterator<T>::operator==(const DoublyLinkedListIterator& rhs) {
+        return nodes[current] == rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    bool DoublyLinkedListIterator<T>::operator!=(const DoublyLinkedListIterator& rhs) {
+        return nodes[current] != rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    bool DoublyLinkedListIterator<T>::operator<(const DoublyLinkedListIterator& rhs) {
+        return nodes[current] < rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    bool DoublyLinkedListIterator<T>::operator>(const DoublyLinkedListIterator& rhs) {
+        return nodes[current] > rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    bool DoublyLinkedListIterator<T>::operator>=(const DoublyLinkedListIterator& rhs) {
+        return nodes[current] >= rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    bool DoublyLinkedListIterator<T>::operator<=(const DoublyLinkedListIterator& rhs) {
+        return nodes[current] <= rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    void DoublyLinkedListIterator<T>::store_nodes (DoublyLinkedListNode<T>* n) {
+        if (n != nullptr) {
+            nodes.push_back(n);
+            store_nodes (n->next);
+        }
     }
 }
 
-// Destructor - Necessary because the new keyword is used to create Nodes!
+template <typename T>
+DoublyLinkedList<T>::DoublyLinkedList (std::initializer_list<T> il) {
+    for (const auto n : il)
+        insert(n);
+}
+
 template <typename T>
 DoublyLinkedList<T>::~DoublyLinkedList () {
-    Node* ite = front;
-    while (ite != nullptr) {
-        Node* victim = ite;
-        ite = ite->next;
+    impl::DoublyLinkedListNode<T>* iter = head;
+    while (iter != nullptr) {
+        impl::DoublyLinkedListNode<T>* victim = iter;
+        iter = iter->next;
         delete victim;
     }
 }
 
-// Appends a new Node onto the back, thus creating a new back
 template <typename T>
-void DoublyLinkedList<T>::append (T datum) {
-    Node* new_node = new Node(datum, nullptr);
-    if (front == nullptr) {
-        front = new_node;
-        back = new_node;
+void DoublyLinkedList<T>::insert (T t) {
+    impl::DoublyLinkedListNode<T>* new_node = new impl::DoublyLinkedListNode<T>();
+    new_node->next = nullptr;
+    new_node->datum = t;
+    if (head == nullptr)
+        head = new_node;
+    else {
+        impl::DoublyLinkedListNode<T>* iter = head;
+        while (iter->next != nullptr)
+            iter = iter->next;
+        iter->next = new_node;
     }
-    back->next = new_node;
-    back = new_node;
     size++;
 }
 
 template <typename T>
+void DoublyLinkedList<T>::insert_unique (T t) {
+    impl::DoublyLinkedListNode<T>* new_node = new impl::DoublyLinkedListNode<T>(nullptr, t);
+    if (head == nullptr)
+        head = new_node;
+    else {
+        impl::DoublyLinkedListNode<T>* iter = head;
+        while (iter->next != nullptr) {
+            if (iter->datum == t)
+                return;
+            iter = iter->next;
+        }
+        iter->next = new_node;
+    }
+    size++;
+}
+
+template <typename T>
+void DoublyLinkedList<T>::remove (T datum) {
+    remove_helper(datum);
+}
+
+template <typename T>
+void DoublyLinkedList<T>::remove_all (T datum) {
+    while (remove_helper(datum)) {}
+}
+
+template <typename T>
 bool DoublyLinkedList<T>::remove_helper (T datum) {
-    Node* ite = front;
-    while (ite != nullptr) {
-        Node* next = ite->next;
-        if (next != nullptr && next->datum == datum) {
-            ite->next = next->next;
-            delete next;
-            size--;
+    if (head == nullptr)
+        return false;
+    
+    impl::DoublyLinkedListNode<T>* iter = head, prev = nullptr;
+    while (iter != nullptr) {
+        if (iter->datum == datum) {
+            prev->next = iter->next;
+            delete iter;
             return true;
         }
-        ite = ite->next;
+        prev = iter;
+        iter = iter->next;
     }
     return false;
 }
 
 template <typename T>
-void DoublyLinkedList<T>::remove (T datum) {
-    while (remove_helper(datum)) {}
+std::ostream& operator<<(std::ostream& os, const DoublyLinkedList<T>& l) {
+    impl::DoublyLinkedListNode<T>* ite = l.head;
+    os << "List: ";
+    while (ite != nullptr) {
+        os << "[" << ite->datum << "] -> ";
+        ite = ite->next;
+    }
+    os << "END" << std::endl;
+
+    return os;
 }
 
 template <typename T>
-void DoublyLinkedList<T>::print_list_contents () {
-    Node* ite = front;
-    std::cout << "List: ";
-    while (ite != nullptr) {
-        std::cout << "[" << ite->datum << "] -> ";
-        ite = ite->next;
-    }
-    std::cout << "END" << std::endl;
+typename DoublyLinkedList<T>::iterator DoublyLinkedList<T>::begin () const {
+    return impl::DoublyLinkedListIterator<T>(head);
+}
+
+template <typename T>
+typename DoublyLinkedList<T>::iterator DoublyLinkedList<T>::end () const {
+    return impl::DoublyLinkedListIterator<T>(nullptr);
 }

@@ -4,7 +4,10 @@
 
 
 int main () {
-    LinkedList<int> ll {1, 2, 3, 4, 5};
+    LinkedList<int> ll {1, 2};
+
+    ll.reverse();
+    ll.reverse();
 
     for (const auto& n : ll) {
         std::cout << n << std::endl;

@@ -1,39 +1,80 @@
 #pragma once
 
+#include <iostream>
+#include <vector>
+#include <initializer_list>
+
+namespace impl {
+    template <typename T>
+    struct DoublyLinkedListNode {
+        DoublyLinkedListNode<T>* next {nullptr};
+        DoublyLinkedListNode<T>* prev {nullptr};
+        T datum {T()};
+    };
+
+    template <typename T>
+    class DoublyLinkedListIterator {
+        public:
+            DoublyLinkedListIterator () = default;
+            explicit DoublyLinkedListIterator (DoublyLinkedListNode<T>* n);
+
+            // Operators
+            T& operator*() const;
+            DoublyLinkedListIterator<T>& operator++();
+            DoublyLinkedListIterator<T> operator++(T t);
+            DoublyLinkedListIterator<T>& operator--();
+            DoublyLinkedListIterator<T> operator--(T t);
+            bool operator==(const DoublyLinkedListIterator<T>& rhs);
+            bool operator!=(const DoublyLinkedListIterator<T>& rhs);
+            bool operator<(const DoublyLinkedListIterator<T>& rhs);
+            bool operator>(const DoublyLinkedListIterator<T>& rhs);
+            bool operator<=(const DoublyLinkedListIterator<T>& rhs);
+            bool operator>=(const DoublyLinkedListIterator<T>& rhs);
+
+        private:
+            void store_nodes (DoublyLinkedListNode<T>* n);
+
+            typename std::vector<DoublyLinkedListNode<T>*> nodes;
+
+            typename std::vector<DoublyLinkedListNode<T>*>::size_type current {0};
+    };
+}
+
 template <typename T>
 class DoublyLinkedList {
-    private:
-        struct Node {
-            T datum;
-            Node* next;
-
-            Node (T d, Node* n) {
-                datum = d;
-                next = nullptr;
-            }
-        };
-
-        // Attempts to remove one T with datum "datum"; if it exists return true, else return false
-        bool remove_helper (T datum);
-
     public:
-        DoublyLinkedList ();
+        using iterator = impl::DoublyLinkedListIterator<T>;
+        DoublyLinkedList () = default;
 
-        DoublyLinkedList (const DoublyLinkedList& other);
+        explicit DoublyLinkedList(std::initializer_list<T> il);
 
         ~DoublyLinkedList ();
 
-        void append (T datum);
+        // Currently, the copy and move operations will not be supported.
+        DoublyLinkedList(const DoublyLinkedList<T>&) = delete;
+        DoublyLinkedList(DoublyLinkedList<T>&&) = delete;
+        DoublyLinkedList<T>& operator=(const DoublyLinkedList<T>&) = delete;
+        DoublyLinkedList<T>& operator=(DoublyLinkedList<T>&&) = delete;
 
-        void remove (T datum);
+        // Client API
+        void insert (const T t);
 
-        void print_list_contents ();
+        void insert_unique (const T t);
 
+        void remove (const T t);
+
+        void remove_all (const T t);
+
+        friend std::ostream& operator<<(std::ostream& os, const DoublyLinkedList<T>& l);
+
+        // Iterators
+        iterator begin() const;
+        iterator end() const;
+        
     private:
-        // The size of the LinkedList
-        std::size_t size;
+        size_t size;
 
-        // The front and back of the LinkedList
-        Node* front;
-        Node* back;
+        impl::DoublyLinkedListNode<T>* head {nullptr};
+
+        bool remove_helper (T t);
 };

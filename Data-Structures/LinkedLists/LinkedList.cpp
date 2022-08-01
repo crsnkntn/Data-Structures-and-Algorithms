@@ -127,6 +127,22 @@ bool LinkedList<T>::remove_helper (T datum) {
 }
 
 template <typename T>
+void LinkedList<T>::reverse () {
+    if (head == nullptr)
+        return;
+    impl::LinkedListNode<T>* iter1 = head;
+    impl::LinkedListNode<T>* iter2 = iter1->next;
+    iter1->next = nullptr;
+    while (iter2 != nullptr) {
+        impl::LinkedListNode<T>* temp = iter2->next;
+        iter2->next = &(*iter1);
+        iter1 = iter2;
+        iter2 = &(*temp);
+    }
+    head = &(*iter1);
+}
+
+template <typename T>
 std::ostream& operator<<(std::ostream& os, const LinkedList<T>& l) {
     impl::LinkedListNode<T>* ite = l.head;
     os << "List: ";
