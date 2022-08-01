@@ -23,6 +23,10 @@ namespace impl {
             LinkedListIterator<T> operator++(T t);
             bool operator==(const LinkedListIterator<T>& rhs);
             bool operator!=(const LinkedListIterator<T>& rhs);
+            bool operator<(const LinkedListIterator<T>& rhs);
+            bool operator>(const LinkedListIterator<T>& rhs);
+            bool operator<=(const LinkedListIterator<T>& rhs);
+            bool operator>=(const LinkedListIterator<T>& rhs);
 
         private:
             void store_nodes (LinkedListNode<T>* n);

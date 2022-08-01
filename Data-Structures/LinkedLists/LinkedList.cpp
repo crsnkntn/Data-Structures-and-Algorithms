@@ -41,6 +41,26 @@ namespace impl {
     }
 
     template <typename T>
+    bool LinkedListIterator<T>::operator<(const LinkedListIterator& rhs) {
+        return nodes[current] < rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    bool LinkedListIterator<T>::operator>(const LinkedListIterator& rhs) {
+        return nodes[current] > rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    bool LinkedListIterator<T>::operator<=(const LinkedListIterator& rhs) {
+        return nodes[current] <= rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
+    bool LinkedListIterator<T>::operator>=(const LinkedListIterator& rhs) {
+        return nodes[current] >= rhs.nodes[rhs.current];
+    }
+
+    template <typename T>
     void LinkedListIterator<T>::store_nodes (LinkedListNode<T>* n) {
         if (n != nullptr) {
             nodes.push_back(n);
