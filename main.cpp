@@ -1,12 +1,11 @@
 // Used to test each Data Structure 
-#include "Data-Structures/LinkedLists/LinkedList.h"
-#include "Data-Structures/LinkedLists/LinkedList.cpp"
+#include "Data-Structures/DoublyLinkedList/DLinkedList.h"
+#include "Data-Structures/DoublyLinkedList/DLinkedList.cpp"
 
 
 int main () {
-    LinkedList<int> ll {1, 2};
+    DoublyLinkedList<int> ll {1, 2, 6, 3, 5, 3};
 
-    ll.reverse();
     ll.reverse();
 
     for (const auto& n : ll) {

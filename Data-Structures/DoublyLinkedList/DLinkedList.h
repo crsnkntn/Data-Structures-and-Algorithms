@@ -65,6 +65,8 @@ class DoublyLinkedList {
 
         void remove_all (const T t);
 
+        void reverse ();
+
         friend std::ostream& operator<<(std::ostream& os, const DoublyLinkedList<T>& l);
 
         // Iterators

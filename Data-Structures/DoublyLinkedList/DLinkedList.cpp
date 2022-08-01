@@ -1,4 +1,4 @@
-#include "DoublyLinkedList.h"
+#include "DLinkedList.h"
 
 namespace impl {
     template <typename T>
@@ -106,7 +106,9 @@ template <typename T>
 void DoublyLinkedList<T>::insert (T t) {
     impl::DoublyLinkedListNode<T>* new_node = new impl::DoublyLinkedListNode<T>();
     new_node->next = nullptr;
+    new_node->prev = nullptr;
     new_node->datum = t;
+
     if (head == nullptr)
         head = new_node;
     else {
@@ -114,6 +116,7 @@ void DoublyLinkedList<T>::insert (T t) {
         while (iter->next != nullptr)
             iter = iter->next;
         iter->next = new_node;
+        new_node->prev = &(*iter);
     }
     size++;
 }
@@ -131,6 +134,7 @@ void DoublyLinkedList<T>::insert_unique (T t) {
             iter = iter->next;
         }
         iter->next = new_node;
+        new_node->prev = &(*iter);
     }
     size++;
 }
@@ -161,6 +165,23 @@ bool DoublyLinkedList<T>::remove_helper (T datum) {
         iter = iter->next;
     }
     return false;
+}
+
+template <typename T>
+void DoublyLinkedList<T>::reverse () {
+    if (head == nullptr)
+        return;
+    impl::DoublyLinkedListNode<T>* iter1 = head;
+    impl::DoublyLinkedListNode<T>* iter2 = iter1->next;
+    iter1->next = nullptr;
+    while (iter2 != nullptr) {
+        impl::DoublyLinkedListNode<T>* temp = iter2->next;
+        iter2->next = &(*iter1);
+        iter1->prev = &(*iter2);
+        iter1 = iter2;
+        iter2 = &(*temp);
+    }
+    head = &(*iter1);
 }
 
 template <typename T>
