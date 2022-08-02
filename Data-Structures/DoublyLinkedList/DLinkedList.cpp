@@ -259,6 +259,23 @@ void DoublyLinkedList<T>::insert_to_front (T t) {
 }
 
 template <typename T>
+void DoublyLinkedList<T>::insert_to_back (T t) {
+    if (head == nullptr) {
+        insert(t);
+        return;
+    }
+    impl::DoublyLinkedListNode<T>* new_node = new impl::DoublyLinkedListNode<T>();
+    impl::DoublyLinkedListNode<T>* iter = head;
+    while (iter->next != nullptr)
+        iter = iter->next;
+
+    new_node->datum = t;
+    new_node->next = nullptr;
+    new_node->prev= iter;
+    iter->next = new_node;
+}
+
+template <typename T>
 void DoublyLinkedList<T>::remove_front () {
     if (head == nullptr)
         return;
@@ -268,6 +285,30 @@ void DoublyLinkedList<T>::remove_front () {
 }
 
 template <typename T>
+void DoublyLinkedList<T>::remove_back () {
+    if (head == nullptr)
+        return;
+
+    impl::DoublyLinkedListNode<T>* victim = head;
+    while (victim->next != nullptr)
+        victim = victim->next;
+
+    victim->prev->next = nullptr;
+    delete victim;
+}
+
+template <typename T>
 T DoublyLinkedList<T>::access_front () {
     return (head == nullptr) ? T() : head->datum;
+}
+
+template <typename T>
+T DoublyLinkedList<T>::access_back () {
+    if (head == nullptr)
+        return T();
+    impl::DoublyLinkedListNode<T>* iter = head;
+    while (iter->next != nullptr)
+        iter = iter->next;
+
+    return iter->datum;
 }

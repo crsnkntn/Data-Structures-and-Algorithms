@@ -4,15 +4,15 @@
 #include "../DoublyLinkedList/DLinkedList.cpp"
 
 template <typename T>
-class Queue {
+class Stack {
     private:
         DoublyLinkedList<T> list;
     public:
-        Queue ();
+        Stack ();
 
-        Queue (const Queue<T> &other);
+        Stack (const Stack<T> &other);
 
-        ~Queue ();
+        ~Stack ();
 
         void push (T t);
 
@@ -20,7 +20,7 @@ class Queue {
 
         T front ();
 
-        void print_queue (std::ostream& os);
+        void print_stack (std::ostream& os);
 
-        friend std::ostream& operator<<(std::ostream& os, const Queue<T> &q);
+        friend std::ostream& operator<<(std::ostream& os, const Stack<T> &q);
 };

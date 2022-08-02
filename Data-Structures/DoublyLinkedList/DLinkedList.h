@@ -73,9 +73,15 @@ class DoublyLinkedList {
         
         void insert_to_front (T t);
 
+        void insert_to_back (T t);
+
         void remove_front ();
 
+        void remove_back ();
+
         T access_front ();
+
+        T access_back ();
 
         friend std::ostream& operator<<(std::ostream& os, const DoublyLinkedList<T>& l);
 

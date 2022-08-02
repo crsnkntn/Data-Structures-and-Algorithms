@@ -1,6 +1,4 @@
 #include "Queue.h"
-#include "../DoublyLinkedList/DLinkedList.h"
-#include "../DoublyLinkedList/DLinkedList.cpp"
 
 template <typename T>
 Queue<T>::Queue () {}
