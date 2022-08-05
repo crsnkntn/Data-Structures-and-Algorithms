@@ -9,6 +9,9 @@
     <li>Graph (Point/Path, Vertex/Edge, Node/Pointer)</li>
 </ul>
 
+## Custom Data Structures
+<img src="Data-Structures/PointerMap/POINTERMAP.jpg" alias="Pointer Map Image"></img>
+
 ## Algorithms
 <ul>
     <li>Search and Sort on Linked Lists</li>
